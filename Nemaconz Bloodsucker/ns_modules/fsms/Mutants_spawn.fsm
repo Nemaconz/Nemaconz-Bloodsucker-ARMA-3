@@ -1,0 +1,148 @@
+/*%FSM<COMPILE "C:\Program Files (x86)\Bohemia Interactive\Tools\FSM Editor Personal Edition\scriptedFSM.cfg, Mutants Spawn">*/
+/*%FSM<HEAD>*/
+/*
+item0[] = {"Start_",0,250,-63.141418,-441.305878,26.858559,-391.305878,0.000000,"Start" \n ""};
+item1[] = {"_",8,250,-64.150749,-346.011047,25.849257,-296.011017,0.000000,""};
+item2[] = {"spawn",2,4346,-64.308281,-255.520584,25.691744,-205.520599,0.000000,"spawn"};
+item3[] = {"_",-1,250,62.306355,286.994843,119.327652,286.994843,0.000000,""};
+item4[] = {"Agent_supp",8,250,-68.872253,-157.472900,21.127827,-107.472923,0.000000,"Agent supp"};
+item5[] = {"Supression_",1,250,-65.834793,-54.010098,24.165459,-4.010118,0.000000,"Supression" \n ""};
+version=1;
+class LayoutItems
+{
+	class Item3
+	{
+		class ItemInfo
+		{
+			FontFace="Arial";
+			FontHeight=9;
+			lStyle=1;
+		};
+	};
+};
+link0[] = {0,1};
+link1[] = {1,2};
+link2[] = {2,4};
+link3[] = {4,5};
+globals[] = {0.000000,0,0,0,0,640,480,1,27,6316128,1,-516.145081,524.727417,366.320740,-725.528381,878,921,1};
+window[] = {2,-1,-1,-1,-1,979,25,1317,25,3,896};
+*//*%FSM</HEAD>*/
+class FSM
+{
+  fsmName = "Mutants Spawn";
+  class States
+  {
+    /*%FSM<STATE "Start_">*/
+    class Start_
+    {
+      name = "Start_";
+      init = /*%FSM<STATEINIT""">*/"// ------------------------------------------------------------------" \n
+       "// local vars" \n
+       "// ------------------------------------------------------------------" \n
+       "_type = _this select 0;" \n
+       "_Pos = _this select 1;" \n
+       "_SpawnRadius = _this select 2;" \n
+       "_GroupMarker = _this select 3;" \n
+       "" \n
+       "" \n
+       "_agent = """";" \n
+       "" \n
+       "" \n
+       "" \n
+       "" \n
+       "" \n
+       "" \n
+       "" \n
+       "" \n
+       ""/*%FSM</STATEINIT""">*/;
+      precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+      class Links
+      {
+        /*%FSM<LINK "_">*/
+        class _
+        {
+          priority = 0.000000;
+          to="spawn";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"true" \n
+           ""/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+      };
+    };
+    /*%FSM</STATE>*/
+    /*%FSM<STATE "spawn">*/
+    class spawn
+    {
+      name = "spawn";
+      init = /*%FSM<STATEINIT""">*/"" \n
+       "" \n
+       "// ------------------------------------------------------------------" \n
+       "// Group creation" \n
+       "// ------------------------------------------------------------------" \n
+       "if (isNil(""ns_mut_stopspawn"")) then { ns_mut_stopspawn = 0; }; " \n
+       "" \n
+       "if (ns_mut_stopspawn == 0) then {" \n
+       "	//debug" \n
+       "	//hintSilent ""Something was spawned."";" \n
+       "	if (_type == ""bloodsucker1"") then " \n
+       "	{" \n
+       "			""ns_bloodsucker"" createUnit [_Pos, group ns_mut_leader, ""_agent = this;"",1,""PRIVATE""]; " \n
+       "       };" \n
+       "" \n
+       "	if (_type == ""Zombie1"") then " \n
+       "	{" \n
+       "			""NS_Zombie1"" createUnit [_Pos, group ns_mut_leader, ""_agent = this;"",1,""PRIVATE""]; " \n
+       "       };" \n
+       "" \n
+       "	if (_type == ""Zombie2"") then " \n
+       "      {" \n
+       "			""NS_Zombie2"" createUnit [_Pos, group ns_mut_leader, ""_agent = this;"",1,""PRIVATE""]; " \n
+       "       };" \n
+       "" \n
+       "	if (_type == ""Zombie3"") then " \n
+       "	{" \n
+       "			""NS_Zombie3"" createUnit [_Pos, group ns_mut_leader, ""_agent = this; "",1,""PRIVATE""]; " \n
+       "       };" \n
+       "} else {" \n
+       "	// debug" \n
+       "	//hintSilent ""Nothing was spawned."";" \n
+       "};"/*%FSM</STATEINIT""">*/;
+      precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+      class Links
+      {
+        /*%FSM<LINK "Agent_supp">*/
+        class Agent_supp
+        {
+          priority = 0.000000;
+          to="Supression_";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"(  player distance (getmarkerpos _GroupMarker) > _SpawnRadius  );"/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+      };
+    };
+    /*%FSM</STATE>*/
+    /*%FSM<STATE "Supression_">*/
+    class Supression_
+    {
+      name = "Supression_";
+      init = /*%FSM<STATEINIT""">*/"deletevehicle _agent;" \n
+       "" \n
+       "true;"/*%FSM</STATEINIT""">*/;
+      precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+      class Links
+      {
+      };
+    };
+    /*%FSM</STATE>*/
+  };
+  initState="Start_";
+  finalStates[] =
+  {
+    "Supression_",
+  };
+};
+/*%FSM</COMPILE>*/

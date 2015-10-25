@@ -1,0 +1,4 @@
+class StageTI
+{
+	texture="P:\core\textures\thermal_ti_ca.paa";
+};

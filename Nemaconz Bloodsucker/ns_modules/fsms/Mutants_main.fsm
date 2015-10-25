@@ -1,0 +1,665 @@
+/*%FSM<COMPILE "C:\Program Files (x86)\Bohemia Interactive\Tools\FSM Editor Personal Edition\scriptedFSM.cfg, Mutants Main">*/
+/*%FSM<HEAD>*/
+/*
+item0[] = {"Start_",0,250,183.069946,-588.609619,273.069916,-538.609619,0.000000,"Start" \n ""};
+item1[] = {"_",8,250,182.060608,-493.314606,272.060577,-443.314545,0.000000,""};
+item2[] = {"Set_Timer",2,250,181.903076,-402.824127,271.903107,-352.824188,0.000000,"Set Timer"};
+item3[] = {"mutant_type",2,250,180.873123,-229.159668,270.873077,-179.159912,0.000000,"mutant type"};
+item4[] = {"_",-1,250,55.979496,285.330231,113.000793,285.330231,0.000000,""};
+item5[] = {"Timer",8,250,183.862091,-322.809418,273.862152,-272.809418,0.000000,"Timer"};
+item6[] = {"Timer",8,250,180.624619,279.375061,270.624573,329.374878,0.000000,"Timer"};
+item7[] = {"Spawn",2,250,76.986473,121.456192,166.986633,171.456085,0.000000,"Spawn"};
+item8[] = {"_",8,250,78.185074,33.354382,168.185150,83.354378,0.000000,""};
+item9[] = {"bloodsucker1",4,218,77.042984,-136.393250,167.043060,-86.393242,0.000000,"bloodsucker1"};
+item10[] = {"type",2,250,78.637230,-53.032887,168.637299,-3.032949,0.000000,"type"};
+item11[] = {"Spawn_1",2,250,263.199127,120.452003,353.199280,170.451859,0.000000,"Spawn"};
+item12[] = {"_",8,250,261.075287,35.672611,351.075348,85.672607,0.000000,""};
+item13[] = {"Zombie1",4,218,259.933197,-134.075043,349.933258,-84.075027,0.000000,"Zombie1"};
+item14[] = {"type_1",2,250,261.527435,-50.714672,351.527496,-0.714725,0.000000,"type"};
+item15[] = {"Spawn_2",2,250,370.739594,120.647057,460.739838,170.646942,0.000000,"Spawn"};
+item16[] = {"_",8,250,369.628143,38.962101,459.628265,88.962097,0.000000,""};
+item17[] = {"Zombie2",4,218,368.486053,-130.785553,458.486176,-80.785538,0.000000,"Zombie2"};
+item18[] = {"type_2",2,250,370.080292,-47.425182,460.080414,2.574764,0.000000,"type"};
+item19[] = {"Spawn_3",2,4346,471.496460,120.647057,561.496582,170.646912,0.000000,"Spawn"};
+item20[] = {"_",8,250,470.385010,38.962162,560.385010,88.962158,0.000000,""};
+item21[] = {"Zombie3",4,218,472.028687,-129.940643,562.028687,-79.940628,0.000000,"Zombie3"};
+item22[] = {"type_3",2,250,470.837158,-47.425121,560.837158,2.574825,0.000000,"type"};
+version=1;
+class LayoutItems
+{
+	class Item4
+	{
+		class ItemInfo
+		{
+			FontFace="Arial";
+			FontHeight=9;
+			lStyle=1;
+		};
+	};
+};
+link0[] = {0,1};
+link1[] = {1,2};
+link2[] = {2,5};
+link3[] = {3,9};
+link4[] = {3,13};
+link5[] = {3,17};
+link6[] = {3,21};
+link7[] = {5,3};
+link8[] = {6,3};
+link9[] = {7,6};
+link10[] = {8,7};
+link11[] = {9,10};
+link12[] = {10,8};
+link13[] = {11,6};
+link14[] = {12,11};
+link15[] = {13,14};
+link16[] = {14,12};
+link17[] = {15,6};
+link18[] = {16,15};
+link19[] = {17,18};
+link20[] = {18,16};
+link21[] = {19,6};
+link22[] = {20,19};
+link23[] = {21,22};
+link24[] = {22,20};
+globals[] = {0.000000,0,0,0,0,640,480,1,97,6316128,1,-164.934006,645.446289,398.046997,-564.369141,745,905,1};
+window[] = {2,0,0,-1,-1,991,175,1467,175,3,763};
+*//*%FSM</HEAD>*/
+class FSM
+{
+  fsmName = "Mutants Main";
+  class States
+  {
+    /*%FSM<STATE "Start_">*/
+    class Start_
+    {
+      name = "Start_";
+      init = /*%FSM<STATEINIT""">*/"" \n
+       "_initspawnnumber = 0;" \n
+       "_triglist = [];" \n
+       "" \n
+       "// check blacklisted areas" \n
+       "for [{_n = 0},{_n < 100},{_n = _n + 1}] do {" \n
+       "	if NOT (isnil format [""BIS_arz_%1"",_n]) then {" \n
+       "          _triglist = _triglist + [call compile format  [""BIS_arz_%1"",_n]];" \n
+       "          };" \n
+       "};" \n
+       "" \n
+       "" \n
+       "" \n
+       "//---------------" \n
+       "// user var" \n
+       "//---------------" \n
+       "_SpawnRadius = 300;" \n
+       "_DensityReduction = 50;" \n
+       "_FindPlaceRadius = 200;    " \n
+       "" \n
+       "//---------------" \n
+       "// mutant leader" \n
+       "//---------------" \n
+       "" \n
+       "_unit = ns_mut_leader;" \n
+       "" \n
+       "if (format [""%1"", _unit] == ""any"") then " \n
+       "{" \n
+       "	 cutRsc [""RscMutMod_err"",""PLAIN""];" \n
+       "	_trig = createTrigger [""emptydetector"", [0, 0]];" \n
+       "	_trig setTriggerArea [0, 0, 0, false];" \n
+       "	_trig setTriggerTimeout [param1, param1, param1, false];" \n
+       "	_trig setTriggerType ""end1"";" \n
+       "	_trig setTriggerActivation [""any"", ""present"", false];" \n
+       "	_trig setTriggerStatements [""true"", """", """"];	" \n
+       "};" \n
+       "" \n
+       "if !(isNull _unit) then " \n
+       "{" \n
+       "	// cutRsc [""RscMutMod"",""PLAIN""];" \n
+       "       ns_mut_leader setPos [0, 0, 0];" \n
+       "	 ns_mut_leader allowDamage false;" \n
+       "	 ns_mut_leader addWeapon ""APSI"";" \n
+       "	 ns_mut_leader addWeapon ""mut_heart"";" \n
+       "};" \n
+       "" \n
+       "" \n
+       "//---------------" \n
+       "// global" \n
+       "//---------------" \n
+       "BIS_MaxAnimalsGroupInArea = (_SpawnRadius / _DensityReduction);" \n
+       "BIS_AnimalsGroupInArea = 0;" \n
+       "" \n
+       "// Existing Group in area" \n
+       "NS_BL1InArea = 0;" \n
+       "NS_Z1InArea = 0;" \n
+       "NS_Z2InArea = 0;" \n
+       "NS_Z3InArea = 0;" \n
+       "" \n
+       "//spawn control variable" \n
+       "if (isNil(""ns_mut_stopspawn"")) then { ns_mut_stopspawn = 0; }; " \n
+       "" \n
+       "" \n
+       "//-------------------" \n
+       "// density values " \n
+       "// -------------------" \n
+       "" \n
+       "" \n
+       "_NS_BL1MaxDensity = 0.01;" \n
+       "_NS_BL1MaxGroupInArea = _NS_BL1MaxDensity * BIS_MaxAnimalsGroupInArea;" \n
+       "" \n
+       "_NS_Z1MaxDensity = 20.0;" \n
+       "_NS_Z1MaxGroupInArea = _NS_Z1MaxDensity * BIS_MaxAnimalsGroupInArea;" \n
+       "" \n
+       "_NS_Z2MaxDensity = 20.0;" \n
+       "_NS_Z2MaxGroupInArea = _NS_Z2MaxDensity * BIS_MaxAnimalsGroupInArea;" \n
+       "" \n
+       "_NS_Z3MaxDensity = 20.0;" \n
+       "_NS_Z3MaxGroupInArea = _NS_Z3MaxDensity * BIS_MaxAnimalsGroupInArea;" \n
+       "" \n
+       "" \n
+       "// DEBUG" \n
+       "" \n
+       "// radius marker" \n
+       "" \n
+       "_radiusmark = createMarkerLocal [""animalsspawnradius"", (Getpos player) ];" \n
+       "_radiusmark setMarkerTypeLocal ""Empty"";" \n
+       "//_radiusmark setMarkerShapeLocal ""ELLIPSE"";" \n
+       "_radiusmark setMarkerBrushLocal ""Border"";" \n
+       "_radiusmark setMarkerSizeLocal [_SpawnRadius, _SpawnRadius];" \n
+       "" \n
+       "" \n
+       "" \n
+       "" \n
+       ""/*%FSM</STATEINIT""">*/;
+      precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+      class Links
+      {
+        /*%FSM<LINK "_">*/
+        class _
+        {
+          priority = 0.000000;
+          to="Set_Timer";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"true" \n
+           ""/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+      };
+    };
+    /*%FSM</STATE>*/
+    /*%FSM<STATE "Set_Timer">*/
+    class Set_Timer
+    {
+      name = "Set_Timer";
+      init = /*%FSM<STATEINIT""">*/"_looptime = 0.1;" \n
+       "" \n
+       "_timeNow = time;" \n
+       "_waittime = (_looptime);" \n
+       "" \n
+       ""/*%FSM</STATEINIT""">*/;
+      precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+      class Links
+      {
+        /*%FSM<LINK "Timer">*/
+        class Timer
+        {
+          priority = 0.000000;
+          to="mutant_type";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"(time - _timeNow) >=  _waittime;"/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+      };
+    };
+    /*%FSM</STATE>*/
+    /*%FSM<STATE "mutant_type">*/
+    class mutant_type
+    {
+      name = "mutant_type";
+      init = /*%FSM<STATEINIT""">*/"//-----------------------------------------" \n
+       "// Choose a random animal" \n
+       "//-----------------------------------------" \n
+       "" \n
+       "" \n
+       "" \n
+       "" \n
+       "_initspawnnumber = _initspawnnumber + 1;" \n
+       "if (_initspawnnumber == BIS_MaxAnimalsGroupInArea) then {_waittime = 20};" \n
+       "" \n
+       "_animalssupported = [""bloodsucker1"",""Zombie1"",""Zombie2"",""Zombie3""];" \n
+       "" \n
+       "_animalselected =  (_animalssupported select floor(random(count _animalssupported)));" \n
+       "" \n
+       "// update radius" \n
+       "_radiusmark setmarkerposlocal (getpos player);" \n
+       "" \n
+       "" \n
+       "" \n
+       "" \n
+       "" \n
+       ""/*%FSM</STATEINIT""">*/;
+      precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+      class Links
+      {
+        /*%FSM<LINK "Zombie1">*/
+        class Zombie1
+        {
+          priority = 0.000000;
+          to="type_1";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"(_animalselected == ""Zombie1"");"/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+        /*%FSM<LINK "Zombie2">*/
+        class Zombie2
+        {
+          priority = 0.000000;
+          to="type_2";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"(_animalselected == ""Zombie2"");"/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+        /*%FSM<LINK "Zombie3">*/
+        class Zombie3
+        {
+          priority = 0.000000;
+          to="type_3";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"(_animalselected == ""Zombie3"");"/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+        /*%FSM<LINK "bloodsucker1">*/
+        class bloodsucker1
+        {
+          priority = 0.000000;
+          to="type";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"(_animalselected == ""bloodsucker1"");"/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+      };
+    };
+    /*%FSM</STATE>*/
+    /*%FSM<STATE "Spawn">*/
+    class Spawn
+    {
+      name = "Spawn";
+      init = /*%FSM<STATEINIT""">*/"if (   (BIS_AnimalsGroupInArea < BIS_MaxAnimalsGroupInArea)      AND     (NS_BL1InArea <   _NS_BL1MaxGroupInArea)    ) then {" \n
+       "" \n
+       "" \n
+       "" \n
+       "" \n
+       "//--------------------------------" \n
+       "// vars" \n
+       "//--------------------------------	" \n
+       "_agentnumber = 0;	// but spawn 1 " \n
+       "           " \n
+       "" \n
+       "" \n
+       "// --------------------------------" \n
+       "// Select Favourite places" \n
+       "// --------------------------------" \n
+       "            " \n
+       "            _randrefpoint =  [(getpos player select 0) +Random(2*_SpawnRadius) -_SpawnRadius,(getpos player select 1) +Random(2*_SpawnRadius) -_SpawnRadius];" \n
+       "            _PosList = selectbestplaces [_randrefpoint,_FindPlaceRadius,""0"",10,5];" \n
+       "            _PosSelect = _PosList select (floor random (count _PosList));" \n
+       "            _Pos =  _PosSelect select 0;        " \n
+       "           " \n
+       "            " \n
+       "" \n
+       "      " \n
+       "// --------------------------------" \n
+       "// Lauch Spawn function" \n
+       "// --------------------------------" \n
+       "" \n
+       "{" \n
+       " if (_x distance _Pos < (triggerarea _x select 0)  ) then {_Pos = [0,0];}; " \n
+       "} foreach _triglist;" \n
+       "	if NOT ( (player distance _Pos) > _SpawnRadius ) then {" \n
+       "          		//DEBUG" \n
+       "              _GroupMarker = (str (random 9999));" \n
+       "              createMarkerLocal [_GroupMarker, _Pos ];" \n
+       "             _GroupMarker setMarkerTypeLocal ""Empty"";" \n
+       "             _GroupMarker setMarkerColorLocal ""ColorOrange"";" \n
+       "             _GroupMarker setMarkerTextLocal (str (_agentnumber + 1));             " \n
+       "              [ _GroupMarker, _SpawnRadius, _type] execfsm ""Nemaconz_BS\ns_modules\fsms\Delete_Group.fsm"";" \n
+       "			for ""_i"" from 0 to _agentnumber do" \n
+       "			{" \n
+       "				if (NOT surfaceIsWater _Pos ) then {" \n
+       "            		 _fsm = [_type, _Pos, _SpawnRadius, _GroupMarker] execfsm ""Nemaconz_BS\ns_modules\fsms\Mutants_spawn.fsm"";" \n
+       "			};		" \n
+       "      };" \n
+       " };" \n
+       "};" \n
+       "" \n
+       "_timeNow = time;" \n
+       "" \n
+       ""/*%FSM</STATEINIT""">*/;
+      precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+      class Links
+      {
+        /*%FSM<LINK "Timer">*/
+        class Timer
+        {
+          priority = 0.000000;
+          to="mutant_type";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"(time - _timeNow) >=  _waittime;"/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+      };
+    };
+    /*%FSM</STATE>*/
+    /*%FSM<STATE "type">*/
+    class type
+    {
+      name = "type";
+      init = /*%FSM<STATEINIT""">*/"_type = ""bloodsucker1"";"/*%FSM</STATEINIT""">*/;
+      precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+      class Links
+      {
+        /*%FSM<LINK "_">*/
+        class _
+        {
+          priority = 0.000000;
+          to="Spawn";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"true" \n
+           ""/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+      };
+    };
+    /*%FSM</STATE>*/
+    /*%FSM<STATE "Spawn_1">*/
+    class Spawn_1
+    {
+      name = "Spawn_1";
+      init = /*%FSM<STATEINIT""">*/"if (   (BIS_AnimalsGroupInArea < BIS_MaxAnimalsGroupInArea)      AND     (NS_Z1InArea <   _NS_Z1MaxGroupInArea)    ) then {" \n
+       "" \n
+       "" \n
+       "" \n
+       "" \n
+       "//--------------------------------" \n
+       "// vars" \n
+       "//--------------------------------	" \n
+       "_agentnumber = 0;	// but spawn 1 " \n
+       "           " \n
+       "" \n
+       "" \n
+       "// --------------------------------" \n
+       "// Select Favourite places" \n
+       "// --------------------------------" \n
+       "            " \n
+       "            _randrefpoint =  [(getpos player select 0) +Random(2*_SpawnRadius) -_SpawnRadius,(getpos player select 1) +Random(2*_SpawnRadius) -_SpawnRadius];" \n
+       "            _PosList = selectbestplaces [_randrefpoint,_FindPlaceRadius,""0"",10,5];" \n
+       "            _PosSelect = _PosList select (floor random (count _PosList));" \n
+       "            _Pos =  _PosSelect select 0;        " \n
+       "           " \n
+       "            " \n
+       "" \n
+       "      " \n
+       "// --------------------------------" \n
+       "// Lauch Spawn function" \n
+       "// --------------------------------" \n
+       "" \n
+       "{" \n
+       " if (_x distance _Pos < (triggerarea _x select 0)  ) then {_Pos = [0,0];}; " \n
+       "} foreach _triglist;" \n
+       "	if NOT ( (player distance _Pos) > _SpawnRadius ) then {" \n
+       "          		//DEBUG" \n
+       "              _GroupMarker = (str (random 9999));" \n
+       "              createMarkerLocal [_GroupMarker, _Pos ];" \n
+       "             _GroupMarker setMarkerTypeLocal ""Empty"";" \n
+       "             _GroupMarker setMarkerColorLocal ""ColorOrange"";" \n
+       "             _GroupMarker setMarkerTextLocal (str (_agentnumber + 1));             " \n
+       "              [ _GroupMarker, _SpawnRadius, _type] execfsm ""Nemaconz_BS\ns_modules\fsms\Delete_Group.fsm"";" \n
+       "			for ""_i"" from 0 to _agentnumber do" \n
+       "			{" \n
+       "				if (NOT surfaceIsWater _Pos ) then {" \n
+       "            		 _fsm = [_type, _Pos, _SpawnRadius, _GroupMarker] execfsm ""Nemaconz_BS\ns_modules\fsms\Mutants_spawn.fsm"";" \n
+       "			};		" \n
+       "      };" \n
+       " };" \n
+       "};" \n
+       "" \n
+       "_timeNow = time;" \n
+       "" \n
+       ""/*%FSM</STATEINIT""">*/;
+      precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+      class Links
+      {
+        /*%FSM<LINK "Timer">*/
+        class Timer
+        {
+          priority = 0.000000;
+          to="mutant_type";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"(time - _timeNow) >=  _waittime;"/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+      };
+    };
+    /*%FSM</STATE>*/
+    /*%FSM<STATE "type_1">*/
+    class type_1
+    {
+      name = "type_1";
+      init = /*%FSM<STATEINIT""">*/"_type = ""Zombie1"";"/*%FSM</STATEINIT""">*/;
+      precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+      class Links
+      {
+        /*%FSM<LINK "_">*/
+        class _
+        {
+          priority = 0.000000;
+          to="Spawn_1";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"true" \n
+           ""/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+      };
+    };
+    /*%FSM</STATE>*/
+    /*%FSM<STATE "Spawn_2">*/
+    class Spawn_2
+    {
+      name = "Spawn_2";
+      init = /*%FSM<STATEINIT""">*/"if (   (BIS_AnimalsGroupInArea < BIS_MaxAnimalsGroupInArea)      AND     (NS_Z2InArea <   _NS_Z2MaxGroupInArea)    ) then {" \n
+       "" \n
+       "" \n
+       "" \n
+       "" \n
+       "//--------------------------------" \n
+       "// vars" \n
+       "//--------------------------------	" \n
+       "_agentnumber = 0;	// but spawn 1 " \n
+       "           " \n
+       "" \n
+       "" \n
+       "// --------------------------------" \n
+       "// Select Favourite places" \n
+       "// --------------------------------" \n
+       "            " \n
+       "            _randrefpoint =  [(getpos player select 0) +Random(2*_SpawnRadius) -_SpawnRadius,(getpos player select 1) +Random(2*_SpawnRadius) -_SpawnRadius];" \n
+       "            _PosList = selectbestplaces [_randrefpoint,_FindPlaceRadius,""0"",10,5];" \n
+       "            _PosSelect = _PosList select (floor random (count _PosList));" \n
+       "            _Pos =  _PosSelect select 0;        " \n
+       "           " \n
+       "            " \n
+       "" \n
+       "      " \n
+       "// --------------------------------" \n
+       "// Lauch Spawn function" \n
+       "// --------------------------------" \n
+       "" \n
+       "{" \n
+       " if (_x distance _Pos < (triggerarea _x select 0)  ) then {_Pos = [0,0];}; " \n
+       "} foreach _triglist;" \n
+       "	if NOT ( (player distance _Pos) > _SpawnRadius ) then {" \n
+       "          		//DEBUG" \n
+       "              _GroupMarker = (str (random 9999));" \n
+       "              createMarkerLocal [_GroupMarker, _Pos ];" \n
+       "             _GroupMarker setMarkerTypeLocal ""Empty"";" \n
+       "             _GroupMarker setMarkerColorLocal ""ColorOrange"";" \n
+       "             _GroupMarker setMarkerTextLocal (str (_agentnumber + 1));             " \n
+       "              [ _GroupMarker, _SpawnRadius, _type] execfsm ""Nemaconz_BS\ns_modules\fsms\Delete_Group.fsm"";" \n
+       "			for ""_i"" from 0 to _agentnumber do" \n
+       "			{" \n
+       "				if (NOT surfaceIsWater _Pos ) then {" \n
+       "            		 _fsm = [_type, _Pos, _SpawnRadius, _GroupMarker] execfsm ""Nemaconz_BS\ns_modules\fsms\Mutants_spawn.fsm"";" \n
+       "			};		" \n
+       "      };" \n
+       "  };" \n
+       "};" \n
+       "" \n
+       "_timeNow = time;" \n
+       "" \n
+       ""/*%FSM</STATEINIT""">*/;
+      precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+      class Links
+      {
+        /*%FSM<LINK "Timer">*/
+        class Timer
+        {
+          priority = 0.000000;
+          to="mutant_type";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"(time - _timeNow) >=  _waittime;"/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+      };
+    };
+    /*%FSM</STATE>*/
+    /*%FSM<STATE "type_2">*/
+    class type_2
+    {
+      name = "type_2";
+      init = /*%FSM<STATEINIT""">*/"_type = ""Zombie2"";"/*%FSM</STATEINIT""">*/;
+      precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+      class Links
+      {
+        /*%FSM<LINK "_">*/
+        class _
+        {
+          priority = 0.000000;
+          to="Spawn_2";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"true" \n
+           ""/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+      };
+    };
+    /*%FSM</STATE>*/
+    /*%FSM<STATE "Spawn_3">*/
+    class Spawn_3
+    {
+      name = "Spawn_3";
+      init = /*%FSM<STATEINIT""">*/"if (   (BIS_AnimalsGroupInArea < BIS_MaxAnimalsGroupInArea)      AND     (NS_Z3InArea <  _NS_Z3MaxGroupInArea)    ) then {" \n
+       "" \n
+       "" \n
+       "" \n
+       "" \n
+       "//--------------------------------" \n
+       "// vars" \n
+       "//--------------------------------	" \n
+       "_agentnumber = 0;	// but spawn 1 " \n
+       "           " \n
+       "" \n
+       "" \n
+       "// --------------------------------" \n
+       "// Select Favourite places" \n
+       "// --------------------------------" \n
+       "            " \n
+       "            _randrefpoint =  [(getpos player select 0) +Random(2*_SpawnRadius) -_SpawnRadius,(getpos player select 1) +Random(2*_SpawnRadius) -_SpawnRadius];" \n
+       "            _PosList = selectbestplaces [_randrefpoint,_FindPlaceRadius,""0"",10,5];" \n
+       "            _PosSelect = _PosList select (floor random (count _PosList));" \n
+       "            _Pos =  _PosSelect select 0;        " \n
+       "           " \n
+       "            " \n
+       "" \n
+       "      " \n
+       "// --------------------------------" \n
+       "// Lauch Spawn function" \n
+       "// --------------------------------" \n
+       "" \n
+       "{" \n
+       " if (_x distance _Pos < (triggerarea _x select 0)  ) then {_Pos = [0,0];}; " \n
+       "} foreach _triglist;" \n
+       "	if NOT ( (player distance _Pos) > _SpawnRadius ) then {" \n
+       "          		//DEBUG" \n
+       "              _GroupMarker = (str (random 9999));" \n
+       "              createMarkerLocal [_GroupMarker, _Pos ];" \n
+       "             _GroupMarker setMarkerTypeLocal ""Empty"";" \n
+       "             _GroupMarker setMarkerColorLocal ""ColorOrange"";" \n
+       "             _GroupMarker setMarkerTextLocal (str (_agentnumber + 1));             " \n
+       "              [ _GroupMarker, _SpawnRadius, _type] execfsm ""Nemaconz_BS\ns_modules\fsms\Delete_Group.fsm"";" \n
+       "			for ""_i"" from 0 to _agentnumber do" \n
+       "			{" \n
+       "				if (NOT surfaceIsWater _Pos ) then {" \n
+       "            		 _fsm = [_type, _Pos, _SpawnRadius, _GroupMarker] execfsm ""Nemaconz_BS\ns_modules\fsms\Mutants_spawn.fsm"";" \n
+       "			};		" \n
+       "          };" \n
+       "   };" \n
+       "};" \n
+       "" \n
+       "_timeNow = time;" \n
+       "" \n
+       ""/*%FSM</STATEINIT""">*/;
+      precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+      class Links
+      {
+        /*%FSM<LINK "Timer">*/
+        class Timer
+        {
+          priority = 0.000000;
+          to="mutant_type";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"(time - _timeNow) >=  _waittime;"/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+      };
+    };
+    /*%FSM</STATE>*/
+    /*%FSM<STATE "type_3">*/
+    class type_3
+    {
+      name = "type_3";
+      init = /*%FSM<STATEINIT""">*/"_type = ""Zombie3"";"/*%FSM</STATEINIT""">*/;
+      precondition = /*%FSM<STATEPRECONDITION""">*/""/*%FSM</STATEPRECONDITION""">*/;
+      class Links
+      {
+        /*%FSM<LINK "_">*/
+        class _
+        {
+          priority = 0.000000;
+          to="Spawn_3";
+          precondition = /*%FSM<CONDPRECONDITION""">*/""/*%FSM</CONDPRECONDITION""">*/;
+          condition=/*%FSM<CONDITION""">*/"true" \n
+           ""/*%FSM</CONDITION""">*/;
+          action=/*%FSM<ACTION""">*/""/*%FSM</ACTION""">*/;
+        };
+        /*%FSM</LINK>*/
+      };
+    };
+    /*%FSM</STATE>*/
+  };
+  initState="Start_";
+  finalStates[] =
+  {
+  };
+};
+/*%FSM</COMPILE>*/
